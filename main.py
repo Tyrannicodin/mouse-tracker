@@ -3,6 +3,7 @@ from tkinter.filedialog import askdirectory
 from tkinter.messagebox import askokcancel
 from pyautogui import position, size
 from PIL import Image, ImageDraw
+from random import randint
 from sys import path
 import mouse
 
@@ -22,16 +23,8 @@ def addPoint(drawable:ImageDraw.ImageDraw, colour:tuple, size:int):
 
 def iter_rainbow(colour:list):
     #Create a (kinda) rainbow pattern
-    if colour[-1]<255:
-        colour[-1]+=1
-    else:
-        colour[-1]=0
-        colour[-2]+=1
-    if colour[-2]<255:
-        colour[-2]=0
-        colour[-3]+=1
-    if colour[-3]<255:
-        colour=[0,0,0]
+    for i in range(len(colour)):
+        colour[i]=randint(0, 255)
     return colour
 
 def sanitise(text:str):
@@ -39,7 +32,8 @@ def sanitise(text:str):
     return "".join(char for char in text if not char in "\\/:*?<>|\".")
 
 
-root = Tk("Tracker")
+root = Tk()
+root.title("Tracker")
 stop=False
 tracking=False
 startTrack=False
