@@ -1,8 +1,8 @@
-from tkinter import Tk, Label, Button, Entry
+from tkinter import Tk, Label, Button, Entry, Toplevel
 from tkinter.filedialog import askdirectory
 from tkinter.messagebox import askokcancel
+from PIL import Image, ImageDraw, ImageTk
 from pyautogui import position, size
-from PIL import Image, ImageDraw
 from random import randint
 from sys import path
 import mouse
@@ -58,6 +58,17 @@ def toggleTrack():
     else:
         startTrack=True
 
+#Create window in top right to display on/off and allow easy toggling
+toggle=Toplevel(root)
+toggle.overrideredirect(True)
+toggle.geometry("50x50+0+0")
+toggle.wm_attributes("-topmost", True)
+onImage=ImageTk.PhotoImage(Image.new("RGB", (50,50), (0,255,0)), master=toggle)
+on=Button(toggle, image=onImage, command=toggleTrack)
+offImage=ImageTk.PhotoImage(Image.new("RGB", (50,50), (255,0,0)), master=toggle)
+off=Button(toggle, image=offImage, command=toggleTrack)
+off.grid(column=0,row=0)
+
 #Check for mouse clicks
 def on_down():
     global down
@@ -87,6 +98,7 @@ filelabel.grid(column=1, row=0)
 
 while not stop:
     root.update()
+    toggle.update()
     
     if tracking:
         colour=iter_rainbow(colour)
@@ -95,7 +107,12 @@ while not stop:
         else:
             width=1
         addPoint(draw, tuple(colour), width)
-    elif startTrack:
+        off.grid_forget()
+        on.grid(column=0, row=0)
+    else:
+        on.grid_forget()
+        off.grid(column=0, row=0)
+    if startTrack:
         filename=sanitise(filebox.get())
         if not filename=="":
             tracking=True
