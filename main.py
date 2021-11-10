@@ -1,8 +1,8 @@
+from tkinter import Tk, Label, Button, Entry
+from tkinter.filedialog import askdirectory
+from tkinter.messagebox import askokcancel
 from pyautogui import position, size
 from PIL import Image, ImageDraw
-from tkinter import Tk, Label, Button, Entry
-from tkinter.messagebox import askokcancel
-from tkinter.filedialog import askdirectory
 from sys import path
 
 def gen_image():
