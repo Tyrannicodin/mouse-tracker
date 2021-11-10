@@ -89,7 +89,7 @@ filelabel=Label(root, text="Enter filename")
 filelabel.grid(column=0, row=0)
 filebox=Entry(root)
 filebox.grid(column=0, row=1)
-toggleTrackButton=Button(root, text="Start/End track session", command=toggleTrack)
+toggleTrackButton=Button(root, text="Start/Stop tracking session", command=toggleTrack)
 toggleTrackButton.grid(column=1, row=1)
 def setfile():
     global filelocation
