@@ -1,25 +1,100 @@
-from pyautogui import position
+from pyautogui import position, size
 from PIL import Image, ImageDraw
-import tkinter as tk
+from tkinter import Tk, Label, Button, Entry
+from tkinter.messagebox import askokcancel
+from tkinter.filedialog import askdirectory
+from sys import path
 
-inw = input("Enter file name: ")
+def gen_image():
+    #Create base blank image that is as big as the screen.
+    img=Image.new("RGBA", size(), (255,255,255))
+    return ImageDraw.Draw(img), img
 
-root = tk.Tk()
+def addPoint(drawable:ImageDraw.ImageDraw, colour:tuple):
+    #Add a point to an inputted image
+    xy=position()
+    x1=xy[0]+size
+    x2=xy[0]-size
+    y1=xy[1]+size
+    y2=xy[1]-size
+    drawable.rectangle([(x1, y1), (x2, y2)], colour, colour, 5)
 
-scrx = root.winfo_screenwidth()
-scry = root.winfo_screenheight()
-img=Image.new("RGBA", (scrx, scry), (255,255,255))
-drawable=ImageDraw.Draw(img)
-try:
-    while True:
-        for i1 in range(255):
-            for i2 in range(255):
-                for i3 in range(255):
-                    xy=position()
-                    x1=xy[0]+1
-                    x2=xy[0]-1
-                    y1=xy[1]+1
-                    y2=xy[1]-1
-                    drawable.rectangle([(x1, y1), (x2, y2)], (i1, i2, i3), (i1, i2, i3), 5)
-except KeyboardInterrupt:
-    img.save(f"{inw}.png")
+def iter_rainbow(colour:list):
+    #Create a (kinda) rainbow pattern
+    if colour[-1]<255:
+        colour[-1]+=1
+    else:
+        colour[-1]=0
+        colour[-2]+=1
+    if colour[-2]<255:
+        colour[-2]+=1
+    else:
+        colour[-2]=0
+        colour[-3]+=1
+    if colour[-3]<255:
+        colour[-3]+=1
+    else:
+        colour[-3]=0
+        colour=[0,0,0]
+    return colour
+
+def sanitise(text:str):
+    #Remove non-allowed text
+    return "".join(char for char in text if not char in "\\/:*?<>|\".")
+
+
+root = Tk("Tracker")
+stop=False
+tracking=False
+startTrack=False
+endTrack=False
+filename=""
+colour=[0,0,0]
+filelocation=path[0]
+
+def end():
+    #End the loop
+    global stop
+    if askokcancel("Quit?", "Are you sure you want to quit?"):
+        root.destroy()
+        stop=True
+
+root.protocol("WM_DELETE_WINDOW", end)
+
+def toggleTrack():
+    #Turn on tracking if tracking is off, turn tracking off if tracking is on
+    global startTrack, endTrack, tracking
+    if tracking:
+        endTrack=True
+    else:
+        startTrack=True
+
+#Define root parts
+filelabel=Label(root, text="Enter filename")
+filelabel.grid(column=0, row=0)
+filebox=Entry(root)
+filebox.grid(column=0, row=1)
+toggleTrackButton=Button(root, text="Start/End track session", command=toggleTrack)
+toggleTrackButton.grid(column=1, row=1)
+def setfile():
+    global filelocation
+    filelocation=askdirectory()
+filelabel=Button(root, text="Chose file location", command=setfile)
+filelabel.grid(column=1, row=0)
+
+while not stop:
+    root.update()
+    
+    if tracking:
+        colour=iter_rainbow(colour)
+        addPoint(draw, tuple(colour))
+    elif startTrack:
+        filename=sanitise(filebox.get())
+        if not filename=="":
+            tracking=True
+            draw, image = gen_image()
+        startTrack=False
+    if endTrack:
+        tracking=False
+        image.save(f"{filelocation}\\{filename}.png")
+        endTrack=False
