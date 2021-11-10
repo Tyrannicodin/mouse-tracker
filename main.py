@@ -28,14 +28,9 @@ def iter_rainbow(colour:list):
         colour[-1]=0
         colour[-2]+=1
     if colour[-2]<255:
-        colour[-2]+=1
-    else:
         colour[-2]=0
         colour[-3]+=1
     if colour[-3]<255:
-        colour[-3]+=1
-    else:
-        colour[-3]=0
         colour=[0,0,0]
     return colour
 
