@@ -4,13 +4,14 @@ from tkinter.messagebox import askokcancel
 from pyautogui import position, size
 from PIL import Image, ImageDraw
 from sys import path
+import mouse
 
 def gen_image():
     #Create base blank image that is as big as the screen.
     img=Image.new("RGBA", size(), (255,255,255))
     return ImageDraw.Draw(img), img
 
-def addPoint(drawable:ImageDraw.ImageDraw, colour:tuple):
+def addPoint(drawable:ImageDraw.ImageDraw, colour:tuple, size:int):
     #Add a point to an inputted image
     xy=position()
     x1=xy[0]+size
@@ -69,6 +70,20 @@ def toggleTrack():
     else:
         startTrack=True
 
+#Check for mouse clicks
+def on_down():
+    global down
+    down=True
+
+def on_up():
+    global down
+    down=False
+
+mouse.on_button(on_down, buttons=(mouse.LEFT), types=(mouse.DOWN))
+mouse.on_button(on_up, buttons=(mouse.LEFT), types=(mouse.UP))
+
+down=False
+
 #Define root parts
 filelabel=Label(root, text="Enter filename")
 filelabel.grid(column=0, row=0)
@@ -87,7 +102,11 @@ while not stop:
     
     if tracking:
         colour=iter_rainbow(colour)
-        addPoint(draw, tuple(colour))
+        if down:
+            width=5
+        else:
+            width=1
+        addPoint(draw, tuple(colour), width)
     elif startTrack:
         filename=sanitise(filebox.get())
         if not filename=="":
