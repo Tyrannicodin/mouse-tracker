@@ -98,27 +98,28 @@ filelabel.grid(column=1, row=0)
 
 while not stop:
     root.update()
-    toggle.update()
-    
-    if tracking:
-        colour=iter_rainbow(colour)
-        if down:
-            width=5
+    if not stop:
+        toggle.update()
+        
+        if tracking:
+            colour=iter_rainbow(colour)
+            if down:
+                width=5
+            else:
+                width=1
+            addPoint(draw, tuple(colour), width)
+            off.grid_forget()
+            on.grid(column=0, row=0)
         else:
-            width=1
-        addPoint(draw, tuple(colour), width)
-        off.grid_forget()
-        on.grid(column=0, row=0)
-    else:
-        on.grid_forget()
-        off.grid(column=0, row=0)
-    if startTrack:
-        filename=sanitise(filebox.get())
-        if not filename=="":
-            tracking=True
-            draw, image = gen_image()
-        startTrack=False
-    if endTrack:
-        tracking=False
-        image.save(f"{filelocation}\\{filename}.png")
-        endTrack=False
+            on.grid_forget()
+            off.grid(column=0, row=0)
+        if startTrack:
+            filename=sanitise(filebox.get())
+            if not filename=="":
+                tracking=True
+                draw, image = gen_image()
+            startTrack=False
+        if endTrack:
+            tracking=False
+            image.save(f"{filelocation}\\{filename}.png")
+            endTrack=False
