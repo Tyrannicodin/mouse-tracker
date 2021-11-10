@@ -7,31 +7,6 @@ from random import randint
 from sys import path
 import mouse
 
-def gen_image():
-    #Create base blank image that is as big as the screen.
-    img=Image.new("RGBA", size(), (255,255,255))
-    return ImageDraw.Draw(img), img
-
-def addPoint(drawable:ImageDraw.ImageDraw, colour:tuple, size:int):
-    #Add a point to an inputted image
-    xy=position()
-    x1=xy[0]+size
-    x2=xy[0]-size
-    y1=xy[1]+size
-    y2=xy[1]-size
-    drawable.rectangle([(x1, y1), (x2, y2)], colour, colour, 5)
-
-def iter_rainbow(colour:list):
-    #Create a (kinda) rainbow pattern
-    for i in range(len(colour)):
-        colour[i]=randint(0, 255)
-    return colour
-
-def sanitise(text:str):
-    #Remove non-allowed text
-    return "".join(char for char in text if not char in "\\/:*?<>|\".")
-
-
 root = Tk()
 root.title("Tracker")
 stop=False
@@ -42,8 +17,32 @@ filename=""
 colour=[0,0,0]
 filelocation=path[0]
 
+#Create base blank image that is as big as the screen
+def gen_image():
+    img=Image.new("RGBA", size(), (255,255,255))
+    return ImageDraw.Draw(img), img
+
+#Add a point to an inputted image
+def addPoint(drawable:ImageDraw.ImageDraw, colour:tuple, size:int):
+    xy=position()
+    x1=xy[0]+size
+    x2=xy[0]-size
+    y1=xy[1]+size
+    y2=xy[1]-size
+    drawable.rectangle([(x1, y1), (x2, y2)], colour, colour, 5)
+
+#Create a (kinda) rainbow pattern
+def iter_rainbow(colour:list):
+    for i in range(len(colour)):
+        colour[i]=randint(0, 255)
+    return colour
+
+#Remove non-allowed text
+def sanitise(text:str):
+    return "".join(char for char in text if not char in "\\/:*?<>|\".")
+
+#Quit the session
 def end():
-    #End the loop
     global stop
     if askokcancel("Quit?", "Are you sure you want to quit?"):
         root.destroy()
@@ -51,8 +50,8 @@ def end():
 
 root.protocol("WM_DELETE_WINDOW", end)
 
+#Turn on tracking if tracking is off, turn tracking off if tracking is on
 def toggleTrack():
-    #Turn on tracking if tracking is off, turn tracking off if tracking is on
     global startTrack, endTrack, tracking
     if tracking:
         endTrack=True
@@ -73,7 +72,7 @@ mouse.on_button(on_up, buttons=(mouse.LEFT), types=(mouse.UP))
 
 down=False
 
-#Define root parts
+#Define GUI parts
 filelabel=Label(root, text="Enter filename")
 filelabel.grid(column=0, row=0)
 filebox=Entry(root)
