@@ -23,6 +23,10 @@ defaultconfig={
     'toggle window': {
         'location': 'TOP-LEFT',
         'size': [50, 50]
+    },
+    'main window': {
+        'foreground':[0, 0, 0],
+        'background':[255, 255, 255]
     }
 }
 
