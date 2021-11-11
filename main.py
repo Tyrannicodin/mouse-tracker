@@ -4,7 +4,7 @@ from tkinter.messagebox import askokcancel
 from PIL import Image, ImageDraw, ImageTk
 from pyautogui import position, size
 from random import randint
-from sys import path, version
+from sys import path
 import mouse
 import yaml
 
