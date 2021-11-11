@@ -8,16 +8,6 @@ from sys import path, version
 import mouse
 import yaml
 
-root = Tk()
-root.title("Tracker")
-stop=False
-tracking=False
-startTrack=False
-endTrack=False
-filename=""
-colour=[0,0,0]
-filelocation=path[0]
-
 #Load config
 defaultconfig={
     'toggle window': {
@@ -26,7 +16,8 @@ defaultconfig={
     },
     'main window': {
         'foreground':[0, 0, 0],
-        'background':[255, 255, 255]
+        'background':[255, 255, 255],
+        'default location':"LOCAL"
     }
 }
 
@@ -37,6 +28,36 @@ except:
     with open("config.yml", "w") as f:
         yaml.dump(defaultconfig, f)
         conf=defaultconfig
+
+root = Tk()
+root.title("Tracker")
+bg="#"
+for part in conf["main window"]["background"]:
+    val=hex(part).split("x")[-1]
+    if len(val)==2:
+        bg+=val
+    else:
+        bg+="0"
+        bg+=val
+fg="#"
+for part in conf["main window"]["foreground"]:
+    val=hex(part).split("x")[-1]
+    if len(val)==2:
+        fg+=val
+    else:
+        fg+="0"
+        fg+=val
+root.configure(bg=bg)
+stop=False
+tracking=False
+startTrack=False
+endTrack=False
+filename=""
+colour=[0,0,0]
+if conf["main window"]["default location"]=="LOCAL":
+    filelocation=path[0]
+else:
+    filelocation=conf["main window"]["default location"]
     
 #Create base blank image that is as big as the screen
 def gen_image():
@@ -84,7 +105,6 @@ toggle=Toplevel(root)
 toggle.overrideredirect(True)
 x,y=conf["toggle window"]["size"]
 loclist=conf["toggle window"]["location"].split("-")
-print(loclist)
 if loclist[0]=="TOP":
     yloc="+"
 else:
@@ -116,16 +136,16 @@ mouse.on_button(on_up, buttons=(mouse.LEFT), types=(mouse.UP))
 down=False
 
 #Define GUI parts
-filelabel=Label(root, text="Enter filename")
+filelabel=Label(root, text="Enter filename", background=bg, foreground=fg)
 filelabel.grid(column=0, row=0)
-filebox=Entry(root)
+filebox=Entry(root, background=bg, foreground=fg)
 filebox.grid(column=0, row=1)
-toggleTrackButton=Button(root, text="Start/Stop tracking session", command=toggleTrack)
+toggleTrackButton=Button(root, text="Start/Stop tracking session", command=toggleTrack, background=bg, foreground=fg)
 toggleTrackButton.grid(column=1, row=1)
 def setfile():
     global filelocation
     filelocation=askdirectory()
-filelabel=Button(root, text="Chose file location", command=setfile)
+filelabel=Button(root, text="Chose file location", command=setfile, background=bg, foreground=fg)
 filelabel.grid(column=1, row=0)
 
 #Loop until stop is True
