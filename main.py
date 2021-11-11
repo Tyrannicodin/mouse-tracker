@@ -4,8 +4,9 @@ from tkinter.messagebox import askokcancel
 from PIL import Image, ImageDraw, ImageTk
 from pyautogui import position, size
 from random import randint
-from sys import path
+from sys import path, version
 import mouse
+import yaml
 
 root = Tk()
 root.title("Tracker")
@@ -17,6 +18,22 @@ filename=""
 colour=[0,0,0]
 filelocation=path[0]
 
+#Load config
+defaultconfig={
+    'toggle window': {
+        'location': 'TOP-LEFT',
+        'size': [50, 50]
+    }
+}
+
+try:
+    with open("config.yml", "r") as f:
+        conf=yaml.safe_load(f)
+except:
+    with open("config.yml", "w") as f:
+        yaml.dump(defaultconfig, f)
+        conf=defaultconfig
+    
 #Create base blank image that is as big as the screen
 def gen_image():
     img=Image.new("RGBA", size(), (255,255,255))
@@ -61,7 +78,18 @@ def toggleTrack():
 #Create window in top right to display on/off and allow easy toggling
 toggle=Toplevel(root)
 toggle.overrideredirect(True)
-toggle.geometry("50x50+0+0")
+x,y=conf["toggle window"]["size"]
+loclist=conf["toggle window"]["location"].split("-")
+print(loclist)
+if loclist[0]=="TOP":
+    yloc="+"
+else:
+    yloc="-"
+if loclist[1]=="LEFT":
+    xloc="+"
+else:
+    xloc="-"
+toggle.geometry(f"{x}x{y}{xloc}0{yloc}0")
 toggle.wm_attributes("-topmost", True)
 onImage=ImageTk.PhotoImage(Image.new("RGB", (50,50), (0,255,0)), master=toggle)
 on=Button(toggle, image=onImage, command=toggleTrack)
@@ -96,11 +124,12 @@ def setfile():
 filelabel=Button(root, text="Chose file location", command=setfile)
 filelabel.grid(column=1, row=0)
 
+#Loop until stop is True
 while not stop:
     root.update()
     if not stop:
         toggle.update()
-        
+
         if tracking:
             colour=iter_rainbow(colour)
             if down:
@@ -111,8 +140,9 @@ while not stop:
             off.grid_forget()
             on.grid(column=0, row=0)
         else:
-            on.grid_forget()
-            off.grid(column=0, row=0)
+            if not stop:
+                on.grid_forget()
+                off.grid(column=0, row=0)
         if startTrack:
             filename=sanitise(filebox.get())
             if not filename=="":
