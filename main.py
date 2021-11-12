@@ -12,7 +12,8 @@ import yaml
 defaultconfig={
     'toggle window': {
         'location': 'TOP-LEFT',
-        'size': [50, 50]
+        'size': [50, 50],
+        'enabled': True
     },
     'main window': {
         'foreground':[0, 0, 0],
@@ -100,26 +101,28 @@ def toggleTrack():
     else:
         startTrack=True
 
-#Create window in top right to display on/off and allow easy toggling
-toggle=Toplevel(root)
-toggle.overrideredirect(True)
-x,y=conf["toggle window"]["size"]
-loclist=conf["toggle window"]["location"].split("-")
-if loclist[0]=="TOP":
-    yloc="+"
-else:
-    yloc="-"
-if loclist[1]=="LEFT":
-    xloc="+"
-else:
-    xloc="-"
-toggle.geometry(f"{x}x{y}{xloc}0{yloc}0")
-toggle.wm_attributes("-topmost", True)
-onImage=ImageTk.PhotoImage(Image.new("RGB", (50,50), (0,255,0)), master=toggle)
-on=Button(toggle, image=onImage, command=toggleTrack)
-offImage=ImageTk.PhotoImage(Image.new("RGB", (50,50), (255,0,0)), master=toggle)
-off=Button(toggle, image=offImage, command=toggleTrack)
-off.grid(column=0,row=0)
+enabled=conf["toggle window"]["enabled"]
+if enabled:
+    #Create window in top right to display on/off and allow easy toggling
+    toggle=Toplevel(root)
+    toggle.overrideredirect(True)
+    x,y=conf["toggle window"]["size"]
+    loclist=conf["toggle window"]["location"].split("-")
+    if loclist[0]=="TOP":
+        yloc="+"
+    else:
+        yloc="-"
+    if loclist[1]=="LEFT":
+        xloc="+"
+    else:
+        xloc="-"
+    toggle.geometry(f"{x}x{y}{xloc}0{yloc}0")
+    toggle.wm_attributes("-topmost", True)
+    onImage=ImageTk.PhotoImage(Image.new("RGB", (50,50), (0,255,0)), master=toggle)
+    on=Button(toggle, image=onImage, command=toggleTrack)
+    offImage=ImageTk.PhotoImage(Image.new("RGB", (50,50), (255,0,0)), master=toggle)
+    off=Button(toggle, image=offImage, command=toggleTrack)
+    off.grid(column=0,row=0)
 
 #Check for mouse clicks
 def on_down():
@@ -152,7 +155,8 @@ filelabel.grid(column=1, row=0)
 while not stop:
     root.update()
     if not stop:
-        toggle.update()
+        if enabled:
+            toggle.update()
 
         if tracking:
             colour=iter_rainbow(colour)
@@ -161,10 +165,11 @@ while not stop:
             else:
                 width=1
             addPoint(draw, tuple(colour), width)
-            off.grid_forget()
-            on.grid(column=0, row=0)
+            if enabled:
+                off.grid_forget()
+                on.grid(column=0, row=0)
         else:
-            if not stop:
+            if not stop and enabled:
                 on.grid_forget()
                 off.grid(column=0, row=0)
         if startTrack:
