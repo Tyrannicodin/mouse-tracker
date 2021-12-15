@@ -2,7 +2,8 @@ from tkinter import Tk, Label, Button, Entry, Toplevel
 from tkinter.filedialog import askdirectory
 from tkinter.messagebox import askokcancel
 from PIL import Image, ImageDraw, ImageTk
-from pyautogui import position, size
+from pyautogui import position, size, sleep
+from keyboard import is_pressed
 from random import randint
 from sys import path
 import mouse
@@ -13,14 +14,13 @@ defaultconfig={
     'toggle window': {
         'location': 'TOP-LEFT',
         'size': [50, 50],
-        'enabled': True
+        'enabled': False
     },
     'main window': {
         'foreground':[0, 0, 0],
         'background':[255, 255, 255],
         'default location':"LOCAL"
-    }
-}
+    }}
 
 try:
     with open("config.yml", "r") as f:
@@ -182,3 +182,6 @@ while not stop:
             tracking=False
             image.save(f"{filelocation}\\{filename}.png")
             endTrack=False
+        if is_pressed("f1"):
+            toggleTrack()
+            sleep(5)
