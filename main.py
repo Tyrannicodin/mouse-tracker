@@ -176,12 +176,12 @@ while not stop:
             filename=sanitise(filebox.get())
             if not filename=="":
                 try:
-                    open(f"{filename}.png").close()
+                    open(f"{filelocation}\\{filename}.png").close()
                     i=0
                     while True:
                         i+=1
                         try:
-                            open(f"{filename}{i}.png").close()
+                            open(f"{filelocation}\\{filename}{i}.png").close()
                         except:
                             filename=f"{filename}{i}"
                             break
