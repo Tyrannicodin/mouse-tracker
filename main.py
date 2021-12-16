@@ -175,6 +175,18 @@ while not stop:
         if startTrack:
             filename=sanitise(filebox.get())
             if not filename=="":
+                try:
+                    open(f"{filename}.png").close()
+                    i=0
+                    while True:
+                        i+=1
+                        try:
+                            open(f"{filename}{i}.png").close()
+                        except:
+                            filename=f"{filename}{i}"
+                            break
+                except FileNotFoundError:
+                    filename=filename
                 tracking=True
                 draw, image = gen_image()
             startTrack=False
