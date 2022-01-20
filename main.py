@@ -165,13 +165,17 @@ while not stop:
             else:
                 width=1
             addPoint(draw, tuple(colour), width)
-            if enabled:
+            if enabled and not stop:
                 off.grid_forget()
                 on.grid(column=0, row=0)
+            if not stop:
+                filebox.configure(background="green")
         else:
             if not stop and enabled:
                 on.grid_forget()
                 off.grid(column=0, row=0)
+            if not stop:
+                filebox.configure(background="white")   
         if startTrack:
             filename=sanitise(filebox.get())
             if not filename=="":
